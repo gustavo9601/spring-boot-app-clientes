@@ -1,10 +1,10 @@
-package com.gmarquezp.springbootclientes.models.dao;
+package com.gmarquezp.springbootclientes.models.services;
 
 import com.gmarquezp.springbootclientes.models.entities.Cliente;
 
 import java.util.List;
 
-public interface IClienteDao {
+public interface IClienteService {
 
     public List<Cliente> findAll();
 
@@ -13,5 +13,4 @@ public interface IClienteDao {
     public Cliente findById(Long id);
 
     public void delete(Long id);
-
 }

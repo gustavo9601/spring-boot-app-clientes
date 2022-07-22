@@ -45,6 +45,18 @@
                 <small class="form-text text-danger" th:if="${#fields.hasErrors('fecha')}" th:errors="*{fecha}"></small>
 
             </div>
+
+
+            <div th:object="${cliente}" th:if="${#fields.hasErrors('*')}">
+                <h2>Resumen errores</h2>
+                <hr>
+                <ul>
+                    <li th:each="error : ${#fields.errors}">
+                        <small class="form-text text-danger" th:text="${error}"></small>
+                    </li>
+                </ul>
+            </div>
+
             <div>
                 <input type="submit" value="Guardar" class="btn btn-block btn-dark">
             </div>

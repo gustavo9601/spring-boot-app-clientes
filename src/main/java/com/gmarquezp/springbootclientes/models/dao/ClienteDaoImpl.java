@@ -9,7 +9,7 @@ import javax.persistence.PersistenceContext;
 import javax.transaction.Transactional;
 import java.util.List;
 
-@Repository // Marca que es una clase de persistencia
+@Repository // Marca la clase, para poder ser inyectada y tenga una adecuada traduccion de errores o exepciones
 @Primary // Da prioridad al momento de inyectar interfaces
 public class ClienteDaoImpl implements IClienteDao {
 
@@ -18,7 +18,6 @@ public class ClienteDaoImpl implements IClienteDao {
     private EntityManager entityManager;
 
     @Override
-    @Transactional() // Envuelve la consulta dentro de una transaccion
     public List<Cliente> findAll() {
         return this.entityManager
                 .createQuery("SELECT cliente from Cliente cliente", Cliente.class)
@@ -26,12 +25,26 @@ public class ClienteDaoImpl implements IClienteDao {
     }
 
     @Override
-    @Transactional
     public void save(Cliente cliente) {
         // persist(obj) => Almacena el objeto en la base de datos
         // merge(obj) => Si el objeto ya existe en la base de datos, lo actualiza, sino lo crea
         // remove(obj) => Elimina el objeto de la base de datos
+        System.out.println("Cliente =\t" + cliente);
+        if (cliente.getId() != null) {
+            this.entityManager.merge(cliente);
+        } else {
+            this.entityManager.persist(cliente);
+        }
+    }
 
-        this.entityManager.persist(cliente);
+    @Override
+    public Cliente findById(Long id) {
+        return this.entityManager.find(Cliente.class, id);
+    }
+
+    @Override
+    public void delete(Long id) {
+        Cliente cliente = this.entityManager.find(Cliente.class, id);
+        this.entityManager.remove(cliente);
     }
 }

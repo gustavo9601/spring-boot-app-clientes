@@ -28,6 +28,7 @@
                 <th>Email</th>
                 <th>Fecha</th>
                 <th>Fecha Creacion</th>
+                <th>Opciones</th>
             </tr>
             </thead>
             <tbody>
@@ -38,6 +39,14 @@
                 <td th:text="${cliente.email}"></td>
                 <td th:text="${cliente.fecha}"></td>
                 <td th:text="${cliente.createdAt}"></td>
+                <td>
+                    <a th:href="@{/clientes/editar/} + ${cliente.id}"
+                       th:text="Editar"
+                       class="btn btn-primary btn-small"></a>
+                    <a th:href="@{/clientes/eliminar/} + ${cliente.id}"
+                       th:text="Eliminar"
+                       class="ml-2 btn btn-danger btn-small"></a>
+                </td>
             </tr>
             </tbody>
         </table>
