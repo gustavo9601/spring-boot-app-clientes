@@ -18,6 +18,10 @@
     </div>
 </div>
 
+
+<!-- Flash Messages -->
+<div th:replace="/clientes/componentes/flash-messages :: flash-messages"></div>
+
 <div class="row">
     <div class="col-12">
         <form th:action="@{/clientes/crear}" th:object="${cliente}" method="post">
