@@ -13,9 +13,14 @@ import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.annotation.*;
+import org.springframework.web.multipart.MultipartFile;
 import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
 import javax.validation.Valid;
+import java.io.IOException;
+import java.nio.file.Files;
+import java.nio.file.Path;
+import java.nio.file.Paths;
 import java.util.List;
 import java.util.Map;
 
@@ -33,7 +38,7 @@ public class ClienteController {
             , Model model) {
 
         // of(pagina_Actual, cantidad_registros_mostrar);
-        Pageable pageable = PageRequest.of(page, 2);
+        Pageable pageable = PageRequest.of(page, 5);
 
         Page<Cliente> clientes = this.clienteService.findAll(pageable);
 
@@ -64,7 +69,8 @@ public class ClienteController {
     public String guardar(@Valid Cliente cliente,
                           BindingResult result,
                           Model model,
-                          RedirectAttributes flash // Para pasar mensajes entre vistas
+                          RedirectAttributes flash, // Para pasar mensajes entre vistas
+                          @RequestParam(name = "fileFoto", required = false) MultipartFile foto // Para recibir el archivo
     ) {
 
         if (result.hasErrors()) {
@@ -76,9 +82,40 @@ public class ClienteController {
             return "clientes/crear";
         }
 
+        // Validando la foto
+        if (!foto.isEmpty()) {
+            System.out.println("=".repeat(50));
+            System.out.println("Subiendo archivo");
+            // Especificamos la ruta donde se subiran los archivos
+            Path path = Paths.get("src//main/resources/static/uploads");
+            System.out.println("path: " + path);
+
+            String rootPath = path.toFile().getAbsolutePath();
+            System.out.println("rootPath = " + rootPath);
+
+            try {
+                // Obtenemos el binario de la imagen
+                byte[] fotoBytes = foto.getBytes();
+                Path pathCompleta = Paths.get(rootPath + "//" + foto.getOriginalFilename());
+                System.out.println("pathCompleta = " + pathCompleta);
+
+                // Alamcenando el arvhivo en la ruta
+                Files.write(pathCompleta, fotoBytes);
+                flash.addFlashAttribute("messageInfo", "Imagen subida: " + foto.getOriginalFilename());
+
+                // Seteamos el nombre de la foto, para que se almacena solo el nombre en la BD
+                cliente.setFoto(foto.getOriginalFilename());
+
+            } catch (IOException e) {
+                throw new RuntimeException(e);
+            }
+
+        }
+
+        System.out.println("Cliente a crear =\t" + cliente);
+        this.clienteService.save(cliente);
         // Los mensajes flash se eliminan con el siguiente request
         flash.addFlashAttribute("messageSuccess", "Se creo exitosamente el cliente " + cliente.getNombre());
-        this.clienteService.save(cliente);
         return "redirect:/clientes";
     }
 
@@ -115,6 +152,25 @@ public class ClienteController {
         }
 
         return "redirect:/clientes";
+    }
+
+    @GetMapping("/ver/{id}")
+    public String ver(@PathVariable(value = "id") Long id,
+                      Model model,
+                      RedirectAttributes flash) {
+
+        Cliente cliente = this.clienteService.findById(id);
+
+        if (cliente == null) {
+
+            flash.addFlashAttribute("messageDanger", "No se encontro usuario con ID:\t" + id);
+            return "redirect:/clientes";
+
+
+        }
+        model.addAttribute("tutulo", "Detalle cliente");
+        model.addAttribute("cliente", cliente);
+        return "clientes/ver";
     }
 
 }

@@ -24,7 +24,9 @@
 
 <div class="row">
     <div class="col-12">
-        <form th:action="@{/clientes/crear}" th:object="${cliente}" method="post">
+        <form th:action="@{/clientes/crear}" th:object="${cliente}"
+              enctype="multipart/form-data"
+              method="post">
             <input type="hidden" th:field="*{id}" >
             <div>
                 <label for="nombre">Nombre</label>
@@ -47,8 +49,14 @@
                 <label for="fecha">Fecha</label>
                 <input type="date" th:field="*{fecha}" id="fecha" class="form-control">
                 <small class="form-text text-danger" th:if="${#fields.hasErrors('fecha')}" th:errors="*{fecha}"></small>
-
             </div>
+
+            <div>
+                <label for="foto">Foto</label>
+                <input type="file" name="fileFoto" id="foto" class="form-control">
+                <small class="form-text text-danger" th:if="${#fields.hasErrors('foto')}" th:errors="*{foto}"></small>
+            </div>
+
 
 
             <div th:object="${cliente}" th:if="${#fields.hasErrors('*')}">

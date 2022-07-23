@@ -31,6 +31,8 @@ public class Cliente implements Serializable {
     @Email
     private String email;
 
+    private String foto;
+
     @NotNull
     @DateTimeFormat(pattern = "yyyy-MM-dd")
     private Date fecha;
@@ -94,6 +96,14 @@ public class Cliente implements Serializable {
         this.fecha = fecha;
     }
 
+    public String getFoto() {
+        return foto;
+    }
+
+    public void setFoto(String foto) {
+        this.foto = foto;
+    }
+
     @Override
     public String toString() {
         return "Cliente{" +
@@ -101,6 +111,7 @@ public class Cliente implements Serializable {
                 ", nombre='" + nombre + '\'' +
                 ", apellido='" + apellido + '\'' +
                 ", email='" + email + '\'' +
+                ", foto='" + this.getFoto() + '\'' +
                 ", fecha=" + fecha +
                 ", createdAt=" + createdAt +
                 '}';

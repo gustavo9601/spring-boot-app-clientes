@@ -46,6 +46,9 @@
                 <td th:text="${cliente.fecha}"></td>
                 <td th:text="${cliente.createdAt}"></td>
                 <td>
+                    <a th:href="@{/clientes/ver/} + ${cliente.id}"
+                       th:text="Ver"
+                       class="btn btn-default btn-small"></a>
                     <a th:href="@{/clientes/editar/} + ${cliente.id}"
                        th:text="Editar"
                        class="btn btn-primary btn-small"></a>
