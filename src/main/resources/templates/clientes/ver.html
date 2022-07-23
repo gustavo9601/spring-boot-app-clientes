@@ -36,6 +36,9 @@
                         <img
                                 th:if="${cliente.foto != null}"
                                 th:src="@{'/uploads/' + ${cliente.foto}}" width="200" alt="">
+
+                        <a th:if="${cliente.foto != null && cliente.foto != ''}" th:href="@{/clientes/ver-foto/} + ${cliente.foto}" th:text="'Descargar foto'" target="_blank"></a>
+
                         <span th:if="${cliente.foto == null || cliente.foto == ''}" th:text="'Sin foto'" class="alert alert-info"></span>
                     </div>
                     <div class="col-10">

@@ -3,12 +3,19 @@ package com.gmarquezp.springbootclientes.controllers;
 import com.gmarquezp.springbootclientes.models.dao.IClienteDao;
 import com.gmarquezp.springbootclientes.models.entities.Cliente;
 import com.gmarquezp.springbootclientes.models.services.IClienteService;
+import com.gmarquezp.springbootclientes.models.services.IUploadFileService;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
+import org.springframework.core.io.Resource;
+import org.springframework.core.io.UrlResource;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageImpl;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
+import org.springframework.http.HttpHeaders;
+import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.validation.BindingResult;
@@ -17,12 +24,16 @@ import org.springframework.web.multipart.MultipartFile;
 import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
 import javax.validation.Valid;
+import java.io.File;
 import java.io.IOException;
+import java.net.MalformedURLException;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.util.List;
 import java.util.Map;
+import java.util.UUID;
+
 
 @Controller
 @RequestMapping(value = "/clientes")
@@ -32,6 +43,10 @@ public class ClienteController {
     @Qualifier("clienteService")
     private IClienteService clienteService;
 
+    @Autowired
+    private IUploadFileService uploadFileService;
+
+    private final Logger logger = LoggerFactory.getLogger(ClienteController.class);
 
     @GetMapping({"", "/"})
     public String listar(@RequestParam(name = "page", defaultValue = "0") int page // para poder recibir la pagina por param ?page=1
@@ -84,32 +99,17 @@ public class ClienteController {
 
         // Validando la foto
         if (!foto.isEmpty()) {
-            System.out.println("=".repeat(50));
-            System.out.println("Subiendo archivo");
-            // Especificamos la ruta donde se subiran los archivos
-            Path path = Paths.get("src//main/resources/static/uploads");
-            System.out.println("path: " + path);
 
-            String rootPath = path.toFile().getAbsolutePath();
-            System.out.println("rootPath = " + rootPath);
-
+            String nombreArchivo = null;
             try {
-                // Obtenemos el binario de la imagen
-                byte[] fotoBytes = foto.getBytes();
-                Path pathCompleta = Paths.get(rootPath + "//" + foto.getOriginalFilename());
-                System.out.println("pathCompleta = " + pathCompleta);
-
-                // Alamcenando el arvhivo en la ruta
-                Files.write(pathCompleta, fotoBytes);
-                flash.addFlashAttribute("messageInfo", "Imagen subida: " + foto.getOriginalFilename());
-
-                // Seteamos el nombre de la foto, para que se almacena solo el nombre en la BD
-                cliente.setFoto(foto.getOriginalFilename());
-
+                nombreArchivo = this.uploadFileService.store(foto);
             } catch (IOException e) {
                 throw new RuntimeException(e);
             }
 
+            flash.addFlashAttribute("messageInfo", "Imagen subida: " + nombreArchivo);
+            // Seteamos el nombre de la foto, para que se almacena solo el nombre en la BD
+            cliente.setFoto(nombreArchivo);
         }
 
         System.out.println("Cliente a crear =\t" + cliente);
@@ -144,7 +144,14 @@ public class ClienteController {
     @GetMapping({"/eliminar/{id}"})
     public String eliminar(@PathVariable(value = "id") Long id,
                            RedirectAttributes flash) {
-        if (id > 0) {
+
+        Cliente cliente = this.clienteService.findById(id);
+
+        if (cliente != null && !cliente.getFoto().isBlank()) {
+
+            logger.info("Eliminando la foto: " + cliente.getFoto());
+            this.uploadFileService.delete(cliente.getFoto());
+
             this.clienteService.delete(id);
             flash.addFlashAttribute("messageSuccess", "Se elimino exitosamente el cliente");
         } else {
@@ -171,6 +178,29 @@ public class ClienteController {
         model.addAttribute("tutulo", "Detalle cliente");
         model.addAttribute("cliente", cliente);
         return "clientes/ver";
+    }
+
+
+    // .+ // Indica que soporta en el parametro la separacion por ., en caso contrario spring las trunca
+    // Este endpoint retornara la imagen en Binario
+    @GetMapping(value = "ver-foto/{nombreFoto:.+}")
+    public ResponseEntity<Resource> verFotoRecurso(@PathVariable String nombreFoto) {
+
+        Resource recurso = null;
+        try {
+            recurso = this.uploadFileService.load(nombreFoto);
+        } catch (MalformedURLException e) {
+            logger.error("Error al cargar la imagen: " + e.getMessage());
+            e.printStackTrace();
+            throw new RuntimeException(e);
+        }
+
+        // Respondemos el binario, modificando las cabeceras para que las reconozca el navegador
+        // En el body enviamos el recurso
+        return ResponseEntity.ok()
+                .header(HttpHeaders.CONTENT_DISPOSITION, "attachment; filename=\"" + recurso.getFilename() + "\"")
+                .body(recurso);
+
     }
 
 }
