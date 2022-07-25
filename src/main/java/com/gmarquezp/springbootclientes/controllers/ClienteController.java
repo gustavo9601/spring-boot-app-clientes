@@ -63,6 +63,7 @@ public class ClienteController {
 
         model.addAttribute("titulo", "Listado de clientes");
         model.addAttribute("clientes", clientes);
+        System.out.println("Clientes: " + clientes.getContent());
 
         return "clientes/listar";
     }
@@ -104,7 +105,7 @@ public class ClienteController {
             try {
                 nombreArchivo = this.uploadFileService.store(foto);
             } catch (IOException e) {
-                throw new RuntimeException(e);
+                e.printStackTrace();
             }
 
             flash.addFlashAttribute("messageInfo", "Imagen subida: " + nombreArchivo);
@@ -192,7 +193,6 @@ public class ClienteController {
         } catch (MalformedURLException e) {
             logger.error("Error al cargar la imagen: " + e.getMessage());
             e.printStackTrace();
-            throw new RuntimeException(e);
         }
 
         // Respondemos el binario, modificando las cabeceras para que las reconozca el navegador

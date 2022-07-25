@@ -12,4 +12,8 @@ public interface IUploadFileService {
     public String store(MultipartFile file) throws IOException;
 
     public boolean delete(String fileName);
+
+    public void deleteAll();
+
+    public void initDirectory();
 }

@@ -1,6 +1,8 @@
 package com.gmarquezp.springbootclientes.models.services;
 
 import com.gmarquezp.springbootclientes.models.entities.Cliente;
+import com.gmarquezp.springbootclientes.models.entities.Factura;
+import com.gmarquezp.springbootclientes.models.entities.Producto;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 
@@ -19,5 +21,10 @@ public interface IClienteService {
 
     public void delete(Long id);
 
+    public List<Producto> findByNombre(String nombre);
+
+    public void saveFactura(Factura factura);
+
+    public Producto findProductoById(Long id);
 
 }

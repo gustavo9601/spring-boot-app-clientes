@@ -9,7 +9,7 @@
 <body class="container">
 
 <!--Menu-->
-<nav th:replace="/clientes/componentes/menu :: header-menu"></nav>
+<nav th:replace="/componentes/menu :: header-menu"></nav>
 
 
 <div class="row">
@@ -20,10 +20,17 @@
 
 
 <!-- Flash Messages -->
-<div th:replace="/clientes/componentes/flash-messages :: flash-messages"></div>
+<div th:replace="/componentes/flash-messages :: flash-messages"></div>
 
 
 <div class="row">
+    <div class="col-12">
+        <div class="card">
+            <a th:href="@{/facturas/form/} + ${cliente.id}"
+               th:text="'Crear factura'"
+               class="btn btn-default btn-small"></a>
+        </div>
+    </div>
     <div class="col-12">
         <div class="card">
             <div class="card-header">Detalle cliente</div>
@@ -52,6 +59,42 @@
                 </div>
             </div>
         </div>
+    </div>
+</div>
+
+<div class="row">
+    <div class="col-12">
+        <h2>Facturas</h2>
+    </div>
+    <div class="col-12">
+        <table th:if="${not #lists.isEmpty(cliente.facturas)}"
+               class="table table-bordered table-striped my-4">
+            <thead class="thead-dark">
+            <tr>
+                <th>folio</th>
+                <th>descripción</th>
+                <th>fecha</th>
+                <th>total</th>
+                <th>ver</th>
+<!--
+                <th>eliminar</th>
+-->
+            </tr>
+            </thead>
+            <tbody>
+            <tr th:each="factura: ${cliente.facturas}">
+                <td th:text="${factura.id}"></td>
+                <td th:text="${factura.descripcion}"></td>
+                <td th:text="${factura.auditoria.createdAt}"></td>
+                <td th:text="${factura.total}"></td>
+                <td></td>
+            <!--    <td><a class="btn btn-primary btn-sm" th:href="@{'/factura/ver/' + ${factura.id}}" th:text="'detalle'"></a></td>
+                <td><a class="btn btn-danger btn-sm" th:href="@{'/factura/eliminar/' + ${factura.id}}" th:text="'eliminar'"
+                       onclick="return confirm('¿Estas seguro que desea eliminar la factura?');"></a></td>-->
+            </tr>
+            </tbody>
+
+        </table>
     </div>
 </div>
 

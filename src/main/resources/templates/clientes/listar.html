@@ -9,7 +9,7 @@
 <body class="container">
 
 <!--Menu-->
-<nav th:replace="/clientes/componentes/menu :: header-menu"></nav>
+<nav th:replace="/componentes/menu :: header-menu"></nav>
 
 
 <div class="row">
@@ -20,7 +20,7 @@
 
 
 <!-- Flash Messages -->
-<div th:replace="/clientes/componentes/flash-messages :: flash-messages"></div>
+<div th:replace="/componentes/flash-messages :: flash-messages"></div>
 
 
 <div class="row">
@@ -44,7 +44,7 @@
                 <td th:text="${cliente.apellido}"></td>
                 <td th:text="${cliente.email}"></td>
                 <td th:text="${cliente.fecha}"></td>
-                <td th:text="${cliente.createdAt}"></td>
+                <td th:if="${cliente.auditoria != null}" th:text="${cliente.auditoria.getCreatedAt()}"></td>
                 <td>
                     <a th:href="@{/clientes/ver/} + ${cliente.id}"
                        th:text="Ver"
@@ -55,6 +55,10 @@
                     <a th:href="@{/clientes/eliminar/} + ${cliente.id}"
                        th:text="Eliminar"
                        class="ml-2 btn btn-danger btn-small"></a>
+                    <a th:href="@{/facturas/form/} + ${cliente.id}"
+                       th:text="'Crear factura'"
+                       target="_blank"
+                       class="btn btn-dark btn-small"></a>
                 </td>
             </tr>
             </tbody>

@@ -6,6 +6,7 @@ import org.slf4j.LoggerFactory;
 import org.springframework.core.io.Resource;
 import org.springframework.core.io.UrlResource;
 import org.springframework.stereotype.Service;
+import org.springframework.util.FileSystemUtils;
 import org.springframework.web.multipart.MultipartFile;
 
 import java.io.File;
@@ -87,5 +88,42 @@ public class UploadFileServiceImpl implements IUploadFileService {
 
     public String getPathCompleto(String fileName) {
         return ROOT_PATH + "/" + fileName;
+    }
+
+    @Override
+    public void deleteAll() {
+        logger.info("Eliminando todos los archivos");
+        FileSystemUtils.deleteRecursively(Paths.get(ROOT_PATH).toFile());
+
+        /*
+
+        Forma manual
+
+        File directorio = new File(ROOT_PATH);
+        File[] listaArchivos = directorio.listFiles();
+        for (File archivo : listaArchivos) {
+            if (archivo.exists() && archivo.canRead()) {
+                logger.info("Eliminando archivo: " + archivo.getName());
+                if (archivo.delete()) {
+                    logger.info("Archivo eliminado =\t" + archivo.getName());
+                } else {
+                    logger.error("No se pudo eliminar el archivo: " + archivo.getName());
+                }
+            }
+        }*/
+    }
+
+    @Override
+    public void initDirectory() {
+        logger.info("Iniciando directorio");
+        Path path = Paths.get(ROOT_PATH);
+        if (!Files.exists(path)) {
+            logger.info("Creando directorio");
+            try {
+                Files.createDirectory(path);
+            } catch (IOException e) {
+                logger.error("No se pudo crear el directorio");
+            }
+        }
     }
 }
