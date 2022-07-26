@@ -1,0 +1,102 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title th:text="${titulo}"></title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.2.0/dist/css/bootstrap.min.css" rel="stylesheet"
+          integrity="sha384-gH2yIJqKdNHPEq0n4Mqa/HGKIhSkIHeL5AyhkYV8i59U5AR6csBvApHHNl/vI1Bx" crossorigin="anonymous">
+    <link rel="stylesheet" th:href="@{/css/jquery-ui.min.css}"/>
+
+</head>
+<body class="container">
+
+<!--Menu-->
+<nav th:replace="/componentes/menu :: header-menu"></nav>
+
+
+<div class="row">
+    <div class="col-12">
+        <h1 th:text="${titulo}" class="text-secondary"></h1>
+    </div>
+</div>
+
+
+<!-- Flash Messages -->
+<div th:replace="/componentes/flash-messages :: flash-messages"></div>
+
+
+<div class="row">
+    <div class="col-12">
+        <div class="card">
+            <h4 class="card-title">
+                <a th:href="@{'/facturas/ver' + ${factura.cliente.id}}"></a>
+            </h4>
+
+            <ul class="list-group my-2">
+                <li class="list-group-item list-group-item-primary"
+                    th:text="'Datos del cliente'"></li>
+                <li class="list-group-item" th:text="${factura.cliente.nombre}"></li>
+                <li class="list-group-item" th:text="${factura.cliente.email}"></li>
+            </ul>
+
+            <ul class="list-group my-2">
+                <li class="list-group-item list-group-item-success"
+                    th:text="'Datos de la factura'"></li>
+                <li class="list-group-item" th:text="'Folio: ' + ${factura.id}"></li>
+                <li class="list-group-item"
+                    th:text="'Descripción: ' + ${factura.descripcion}"></li>
+                <li class="list-group-item"
+                    th:text="'Fecha: ' + ${factura.auditoria.createdAt}"></li>
+            </ul>
+
+            <div class="alert alert-info my-4"
+                 th:if="${#lists.isEmpty(factura.items)}"
+                 th:text="'No hay lineas para la factura' + ${factura.descripcion}"></div>
+
+            <table th:if="${not #lists.isEmpty(factura.items)}"
+                   class="table table-striped table-hover table-bordered my-3">
+                <thead>
+                <tr>
+                    <th>Producto</th>
+                    <th>Precio</th>
+                    <th>Cantidad</th>
+                    <th>Total</th>
+                </tr>
+                </thead>
+                <tbody>
+                <tr th:each="linea: ${factura.items}">
+                    <td th:text="${linea.producto.nombre}"></td>
+                    <td th:text="${linea.producto.precio}"></td>
+                    <td th:text="${linea.cantidad}"></td>
+                    <td th:text="${linea.calcularImporte()}"></td>
+                </tr>
+                </tbody>
+
+            </table>
+
+            <h5 class="float-right">
+                Gran Total <span th:text="${factura.total}"></span>
+            </h5>
+
+            <div class="card border-info mb-4" style="max-width: 20rem;">
+                <div class="card-header">Observaciones</div>
+                <div class="card-body">
+                    <p class="card-text" th:text="${factura.observacion}"
+                       th:if="${not #strings.isEmpty(factura.observacion)}"></p>
+                    <h4 class="card-title"
+                        th:if="${#strings.isEmpty(factura.observacion)}"
+                        th:text="'No tiene observaciones'"></h4>
+                </div>
+            </div>
+
+            <a th:href="@{'/clientes/ver/' + ${factura.cliente.id}}"
+               class="btn btn-light btn-xs">&laquo; volver</a>
+
+
+        </div>
+    </div>
+</div>
+
+
+</body>
+</html>

@@ -167,7 +167,9 @@ public class ClienteController {
                       Model model,
                       RedirectAttributes flash) {
 
-        Cliente cliente = this.clienteService.findById(id);
+        // Cliente cliente = this.clienteService.findById(id);
+        // Usando JPQL para traer el cliente con sus facturas en un solo query
+        Cliente cliente = this.clienteService.fetchByIdWithFacturas(id);
 
         if (cliente == null) {
 

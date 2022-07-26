@@ -74,7 +74,7 @@ public class FacturaController {
 
         logger.info("params " + params);
 
-        if(result.hasErrors()){
+        if (result.hasErrors()) {
             model.addAttribute("titulo", "Crear Factura");
             model.addAttribute("error", "Error al guardar");
             return "redirect:/facturas/form/" + clienteId;
@@ -104,6 +104,42 @@ public class FacturaController {
         this.clienteService.saveFactura(factura);
 
         flash.addFlashAttribute("success", "Factura creada con éxito");
+        return "redirect:/clientes/ver/" + factura.getCliente().getId();
+    }
+
+    @GetMapping("/ver/{id}")
+    public String ver(@PathVariable(value = "id") Long id,
+                      RedirectAttributes flash,
+                      Model model) {
+        // Factura factura = this.clienteService.findFacturaById(id);
+        // Usando con JPQL el query para hacer solo uno
+        Factura factura = this.clienteService.fetchWithClienteWithItemFacturaWithProducto(id);
+        logger.info("Factura encontrada=\t" + factura);
+
+        if (factura == null) {
+            flash.addFlashAttribute("error", "Factura no encontrada");
+            return "redirect:/clientes";
+        }
+
+        model.addAttribute("titulo", "Factura: " + factura.getId());
+        model.addAttribute("factura", factura);
+        return "facturas/ver";
+    }
+
+    @GetMapping("/eliminar/{id}")
+    public String eliminar(@PathVariable(value = "id") Long id,
+                           RedirectAttributes flash,
+                           Model model) {
+
+        Factura factura = this.clienteService.findFacturaById(id);
+        if (factura == null) {
+            flash.addFlashAttribute("error", "Factura no encontrada");
+            return "redirect:/clientes";
+        }
+
+        this.clienteService.deleteFactura(factura);
+        model.addAttribute("titulo", "Facturas");
+        flash.addFlashAttribute("success", "Factura eliminada");
         return "redirect:/clientes/ver/" + factura.getCliente().getId();
     }
 
