@@ -1,5 +1,6 @@
 <!DOCTYPE html>
-<html lang="en">
+<html xmlns:th="http://www.thymeleaf.org"
+      xmlns:sec="http://www.thymeleaf.org/extras/spring-security">
 <head>
     <meta charset="UTF-8">
     <title th:text="${titulo}"></title>
@@ -45,18 +46,24 @@
                 <td th:text="${cliente.email}"></td>
                 <td th:text="${cliente.fecha}"></td>
                 <td th:if="${cliente.auditoria != null}" th:text="${cliente.auditoria.getCreatedAt()}"></td>
+                <!--
+                  sec:authorize="hasAnyRole('ROLE_ADMIN')" // Helper de Spring secutiry para mostrar o no elementos si tiene un role
+                -->
                 <td>
                     <a th:href="@{/clientes/ver/} + ${cliente.id}"
                        th:text="Ver"
                        class="btn btn-default btn-small"></a>
                     <a th:href="@{/clientes/editar/} + ${cliente.id}"
                        th:text="Editar"
+                       sec:authorize="hasAnyRole('ROLE_ADMIN')"
                        class="btn btn-primary btn-small"></a>
                     <a th:href="@{/clientes/eliminar/} + ${cliente.id}"
                        th:text="Eliminar"
+                       sec:authorize="hasAnyRole('ROLE_ADMIN')"
                        class="ml-2 btn btn-danger btn-small"></a>
                     <a th:href="@{/facturas/form/} + ${cliente.id}"
                        th:text="'Crear factura'"
+                       sec:authorize="hasAnyRole('ROLE_ADMIN')"
                        target="_blank"
                        class="btn btn-dark btn-small"></a>
                 </td>
@@ -66,9 +73,9 @@
     </div>
 </div>
 
-<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.2.0/dist/js/bootstrap.bundle.min.js"
-        integrity="sha384-A3rJD856KowSb7dwlZdYEkO39Gagi7vIsF0jrRAoQmDKKtQBHUuLZ9AsSv4jD4Xa"
-        crossorigin="anonymous"></script>
+<!--Footer-->
+<footer th:replace="/componentes/footer :: footer"></footer>
+
 
 </body>
 </html>

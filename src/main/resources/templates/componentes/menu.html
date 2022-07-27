@@ -1,4 +1,6 @@
 <!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org"
+      xmlns:sec="http://www.thymeleaf.org/extras/spring-security">
 <body>
 <!--
 th:fragment="header-menu" // el id para invocarlo en los otros archivos
@@ -18,10 +20,27 @@ th:fragment="header-menu" // el id para invocarlo en los otros archivos
                     <a class="nav-link active" aria-current="page" th:ref="@{/static}">Home</a>
                 </li>
                 <li class="nav-item">
-                    <a class="nav-link" th:href="@{/clientes}">Clientes</a>
+                    <a class="nav-link" th:href="@{/clientes}">Ver Clientes</a>
                 </li>
                 <li class="nav-item">
-                    <a class="nav-link" th:href="@{/clientes/crear}">Crear</a>
+                    <a class="nav-link" th:href="@{/clientes/crear}">Crear Cliente</a>
+                </li>
+            </ul>
+
+            <ul class="navbar-nav navbar-right">
+                <!--
+                isAuthenticated() // propio de spring security
+                -->
+
+                <li sec:authorize="!isAuthenticated()"><a
+                        class="btn btn-outline-primary" th:href="@{/login}">Iniciar sesion</a></li>
+
+                <li sec:authorize="isAuthenticated()">
+                        <form id="logoutForm" th:action="@{/logout}" method="post">
+                            <button onclick="document.getElementById('logoutForm').submit();" type="submit">Cerrar sesion</button>
+                            <input type="hidden" th:name="${_csrf.parameterName}" th:value="${_csrf.token}"/>
+                        </form>
+
                 </li>
             </ul>
         </div>

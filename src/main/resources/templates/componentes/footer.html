@@ -1,0 +1,22 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org"
+      xmlns:sec="http://www.thymeleaf.org/extras/spring-security">
+<body>
+<!--
+th:fragment="footer" // el id para invocarlo en los otros archivos
+-->
+<footer th:fragment="footer" class="container">
+    <p sec:authorize="isAuthenticated()">
+        Usuario logeado: <span sec:authentication="name"></span> | Roles: <span
+            sec:authentication="principal.authorities"></span>
+    </p>
+
+
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.2.0/dist/js/bootstrap.bundle.min.js"
+            integrity="sha384-A3rJD856KowSb7dwlZdYEkO39Gagi7vIsF0jrRAoQmDKKtQBHUuLZ9AsSv4jD4Xa"
+            crossorigin="anonymous"></script>
+</footer>
+
+
+</body>
+</html>
