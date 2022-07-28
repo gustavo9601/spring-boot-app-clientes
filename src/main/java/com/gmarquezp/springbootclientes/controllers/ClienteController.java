@@ -16,6 +16,12 @@ import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.access.annotation.Secured;
+import org.springframework.security.access.prepost.PreAuthorize;
+import org.springframework.security.core.Authentication;
+import org.springframework.security.core.GrantedAuthority;
+import org.springframework.security.core.context.SecurityContext;
+import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.validation.BindingResult;
@@ -23,6 +29,7 @@ import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
 import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
+import javax.servlet.http.HttpServletRequest;
 import javax.validation.Valid;
 import java.io.File;
 import java.io.IOException;
@@ -30,6 +37,7 @@ import java.net.MalformedURLException;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
+import java.util.Collection;
 import java.util.List;
 import java.util.Map;
 import java.util.UUID;
@@ -49,8 +57,13 @@ public class ClienteController {
     private final Logger logger = LoggerFactory.getLogger(ClienteController.class);
 
     @GetMapping({"", "/"})
-    public String listar(@RequestParam(name = "page", defaultValue = "0") int page // para poder recibir la pagina por param ?page=1
-            , Model model) {
+    public String listar(@RequestParam(name = "page", defaultValue = "0") int page, // para poder recibir la pagina por param ?page=1
+                         Model model,
+                         Authentication authentication,
+                         HttpServletRequest request) {
+
+        // Opteniendo el contexto de autenticacion de forma estatica
+        Authentication authenticationStatic = SecurityContextHolder.getContext().getAuthentication();
 
         // of(pagina_Actual, cantidad_registros_mostrar);
         Pageable pageable = PageRequest.of(page, 5);
@@ -65,9 +78,33 @@ public class ClienteController {
         model.addAttribute("clientes", clientes);
         System.out.println("Clientes: " + clientes.getContent());
 
+        System.out.println("Autenticacion por parametro=\t" + authentication);
+        System.out.println("Autenticacion estatica=\t" + authenticationStatic);
+
+
+        // Validando el rol del usuario de forma programatica
+        if (this.hasRole("ROLE_ADMIN")) {
+            System.out.println("El usuario es administrador - Forma programatica");
+        } else if (this.hasRole("ROLE_USER")) {
+            System.out.println("El usuario es usuario - Forma programatica");
+        } else {
+            System.out.println("El usuario no esta autenticado - Forma programatica");
+        }
+
+        // Validando el rol del usuario con HttpRequest
+        if (request.isUserInRole("ROLE_ADMIN")) {
+            System.out.println("El usuario es administrador - Forma HttpRequest");
+        } else if (request.isUserInRole("ROLE_USER")) {
+            System.out.println("El usuario es usuario - Forma HttpRequest");
+        } else {
+            System.out.println("El usuario no esta autenticado - Forma HttpRequest");
+        }
+
         return "clientes/listar";
     }
 
+    // @PreAuthorize("hasAnyRole('ROLE_ADMIN')") // Solo para el rol admin
+    @Secured("ROLE_ADMIN") // Solo para el rol admin
     @GetMapping({"/crear"})
     // Map<String, Object> model == Model model
     public String crear(Map<String, Object> model) {
@@ -162,6 +199,7 @@ public class ClienteController {
         return "redirect:/clientes";
     }
 
+    @Secured("ROLE_USER") // Añade la seguridad al endpoint
     @GetMapping("/ver/{id}")
     public String ver(@PathVariable(value = "id") Long id,
                       Model model,
@@ -202,6 +240,40 @@ public class ClienteController {
         return ResponseEntity.ok()
                 .header(HttpHeaders.CONTENT_DISPOSITION, "attachment; filename=\"" + recurso.getFilename() + "\"")
                 .body(recurso);
+
+    }
+
+
+    private Boolean hasRole(String role) {
+        // Obteniendo la autenticacion de forma estatica
+        SecurityContext securityContext = SecurityContextHolder.getContext();
+
+        if (securityContext == null) {
+            return false;
+        }
+
+        Authentication authentication = securityContext.getAuthentication();
+
+        if (authentication == null) {
+            return false;
+        }
+
+        // Obteniendo los roles de la autenticacion
+        Collection<? extends GrantedAuthority> authorities = authentication.getAuthorities();
+        System.out.println("Authorities: " + authorities);
+
+
+        // Forma declarativa recorriendo el rol
+        /*for (GrantedAuthority authority : authorities) {
+            if(authority.getAuthority().equals(role)){
+                return true;
+            }
+        }*/
+
+        return authorities.stream()
+                // .filter(authority -> authority.getAuthority().equals(role))
+                .anyMatch(authority -> authority.getAuthority().equals(role));
+
 
     }
 

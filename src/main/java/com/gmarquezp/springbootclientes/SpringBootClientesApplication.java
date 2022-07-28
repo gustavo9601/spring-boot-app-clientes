@@ -8,6 +8,7 @@ import org.springframework.boot.CommandLineRunner;
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.AutoConfigureOrder;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
+import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 
 @SpringBootApplication
 public class SpringBootClientesApplication implements CommandLineRunner {
@@ -15,6 +16,9 @@ public class SpringBootClientesApplication implements CommandLineRunner {
 
     @Autowired
     IUploadFileService uploadFileService;
+
+    @Autowired
+    BCryptPasswordEncoder passwordEncoder;
 
     private final Logger logger = LoggerFactory.getLogger(SpringBootClientesApplication.class);
 
@@ -29,5 +33,13 @@ public class SpringBootClientesApplication implements CommandLineRunner {
         uploadFileService.deleteAll();
         logger.info("Inicializando directorio");
         uploadFileService.initDirectory();
+
+
+        /*
+        * Encriptacion
+        * */
+        String password = "123456";
+        String encriptado = this.passwordEncoder.encode(password);
+        logger.info("Password encriptado: " + encriptado);
     }
 }
