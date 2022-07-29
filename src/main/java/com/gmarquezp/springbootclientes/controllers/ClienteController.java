@@ -8,6 +8,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
+import org.springframework.context.MessageSource;
 import org.springframework.core.io.Resource;
 import org.springframework.core.io.UrlResource;
 import org.springframework.data.domain.Page;
@@ -37,10 +38,7 @@ import java.net.MalformedURLException;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
-import java.util.Collection;
-import java.util.List;
-import java.util.Map;
-import java.util.UUID;
+import java.util.*;
 
 
 @Controller
@@ -51,6 +49,9 @@ public class ClienteController {
     @Qualifier("clienteService")
     private IClienteService clienteService;
 
+    // Permite acceder a los archivos de messages
+    @Autowired
+    private MessageSource messageSource;
     @Autowired
     private IUploadFileService uploadFileService;
 
@@ -74,7 +75,10 @@ public class ClienteController {
         // Todos los registros sin paginar
         // List<Cliente> clientes = this.clienteService.findAll();
 
-        model.addAttribute("titulo", "Listado de clientes");
+        String tituloClientes = messageSource.getMessage("text.cliente.listar.titulo", null, request.getLocale());
+        logger.info("Titulo: " + tituloClientes);
+        logger.info("locale: " + request.getLocale());
+        model.addAttribute("titulo", tituloClientes);
         model.addAttribute("clientes", clientes);
         System.out.println("Clientes: " + clientes.getContent());
 

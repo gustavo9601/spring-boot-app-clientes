@@ -30,12 +30,16 @@
             <thead>
             <tr>
                 <th>Id</th>
-                <th>Nombre</th>
-                <th>Apellido</th>
-                <th>Email</th>
-                <th>Fecha</th>
-                <th>Fecha Creacion</th>
-                <th>Opciones</th>
+                <!--
+                text.cliente.nombre // tomara el texto de los archivos de messages por cada lenguaje
+                th:text="#{text.cliente.nombre}"
+                -->
+                <th th:text="#{text.cliente.nombre}"></th>
+                <th th:text="#{text.cliente.apellido}">Apellido</th>
+                <th th:text="#{text.cliente.email}">Email</th>
+                <th th:text="#{text.cliente.factura.fecha}">Fecha</th>
+                <th th:text="#{text.cliente.factura.fecha}">Fecha Creacion</th>
+                <th th:text="#{text.cliente.opciones}">Opciones</th>
             </tr>
             </thead>
             <tbody>
@@ -51,18 +55,18 @@
                 -->
                 <td>
                     <a th:href="@{/clientes/ver/} + ${cliente.id}"
-                       th:text="Ver"
+                       th:text="#{text.cliente.detalle.titulo}"
                        class="btn btn-default btn-small"></a>
                     <a th:href="@{/clientes/editar/} + ${cliente.id}"
-                       th:text="Editar"
+                       th:text="#{text.cliente.editar}"
                        sec:authorize="hasAnyRole('ROLE_ADMIN')"
                        class="btn btn-primary btn-small"></a>
                     <a th:href="@{/clientes/eliminar/} + ${cliente.id}"
-                       th:text="Eliminar"
+                       th:text="#{text.cliente.factura.eliminar}"
                        sec:authorize="hasAnyRole('ROLE_ADMIN')"
                        class="ml-2 btn btn-danger btn-small"></a>
                     <a th:href="@{/facturas/form/} + ${cliente.id}"
-                       th:text="'Crear factura'"
+                       th:text="#{text.cliente.factura.crear}"
                        sec:authorize="hasAnyRole('ROLE_ADMIN')"
                        target="_blank"
                        class="btn btn-dark btn-small"></a>

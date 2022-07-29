@@ -87,7 +87,7 @@ public class SpringSecurityConfig extends WebSecurityConfigurerAdapter {
     protected void configure(HttpSecurity http) throws Exception {
         // Interceptor en cada una de las rutas
         http.authorizeRequests()
-                .antMatchers("/", "/css/**", "/js/**", "/images/**", "/clientes").permitAll() // Acceso sin autenticacion
+                .antMatchers("/", "/css/**", "/js/**", "/images/**", "/clientes", "/locale").permitAll() // Acceso sin autenticacion
                 .antMatchers("/uploads/**").hasRole("USER")
                 // Se usaran anotaciones en los controladores para autorizar o no una accion @Secured y @PreAuthorize
                 // .antMatchers("/clientes/ver/**").hasRole("USER") // Acceso con rol USER
