@@ -42,6 +42,7 @@ import java.util.*;
 
 
 @Controller
+// @RestController => @Controller + @ResponseBody // Todos los metodos se mapearan a Json
 @RequestMapping(value = "/clientes")
 public class ClienteController {
 
@@ -105,6 +106,13 @@ public class ClienteController {
         }
 
         return "clientes/listar";
+    }
+
+
+    @GetMapping({"/rest"})
+    // @ResponseBody // Para que interprete el strem de respuesta a Json
+    public @ResponseBody List<Cliente> listarRest() {
+        return this.clienteService.findAll();
     }
 
     // @PreAuthorize("hasAnyRole('ROLE_ADMIN')") // Solo para el rol admin

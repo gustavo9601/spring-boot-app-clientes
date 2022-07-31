@@ -1,6 +1,8 @@
 package com.gmarquezp.springbootclientes.models.entities;
 
 
+import com.fasterxml.jackson.annotation.JsonBackReference;
+
 import javax.persistence.*;
 import javax.validation.constraints.NotEmpty;
 import java.io.Serializable;
@@ -37,6 +39,7 @@ public class Factura implements Serializable {
      * fetch = FetchType.LAZY // Para cargar el query unicamente cuando sea necesario
      * */
     @ManyToOne(fetch = FetchType.LAZY)
+    @JsonBackReference // Para que no se serializee el cliente en la factura
     private Cliente cliente; // creara cliente_id
 
     @Embedded // Ahora se extienden todos los atributo de la clase @Embeddable en esta

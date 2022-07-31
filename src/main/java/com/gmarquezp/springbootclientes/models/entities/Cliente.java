@@ -1,6 +1,8 @@
 package com.gmarquezp.springbootclientes.models.entities;
 
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
+import com.fasterxml.jackson.annotation.JsonManagedReference;
 import org.springframework.format.annotation.DateTimeFormat;
 
 import javax.persistence.*;
@@ -44,19 +46,21 @@ public class Cliente implements Serializable {
     private Auditoria auditoria = new Auditoria();
 
     /*
-    * @OneToMany
-    * // Un cliente tiene muchas facturas
-    * One => Cliente
-    * Many => Facturas
-    * fetch = FetchType.LAZY // Para cargar el query unicamente cuando sea necesario
-    * cascade = CascadeType.ALL // Operaciones en casacada => Si se elimina un cliente se eliminan todas sus facturas
-    *
-    * // Para que la relacion sea de una forma inversa (Bidireccional), es decir, que la factura tenga un cliente
-    * // Debe ser el nombre en minuscula de la relacion en la otra entidad, para que en Factura quede la llave foranea
-    * mappedBy = "cliente"
-    * */
+     * @OneToMany
+     * // Un cliente tiene muchas facturas
+     * One => Cliente
+     * Many => Facturas
+     * fetch = FetchType.LAZY // Para cargar el query unicamente cuando sea necesario
+     * cascade = CascadeType.ALL // Operaciones en casacada => Si se elimina un cliente se eliminan todas sus facturas
+     *
+     * // Para que la relacion sea de una forma inversa (Bidireccional), es decir, que la factura tenga un cliente
+     * // Debe ser el nombre en minuscula de la relacion en la otra entidad, para que en Factura quede la llave foranea
+     * mappedBy = "cliente"
+     * */
     @OneToMany(fetch = FetchType.LAZY, cascade = CascadeType.ALL, mappedBy = "cliente")
-    List<Factura> facturas;
+    // @JsonIgnore // Para que no se muestre el objeto en el JSON
+    @JsonManagedReference // Para que no se muestre el objeto en el JSON
+            List<Factura> facturas;
 
 
     public Cliente() {

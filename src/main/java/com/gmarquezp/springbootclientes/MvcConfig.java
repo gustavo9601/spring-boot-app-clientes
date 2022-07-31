@@ -59,6 +59,14 @@ public class MvcConfig implements WebMvcConfigurer {
         return localeChangeInterceptor;
     }
 
+    /*@Bean // Bean para añadir el comportamiendo de XML, para serializar el objeto
+    public Jaxb2Marshaller jaxb2Marshaller() {
+        Jaxb2Marshaller jaxb2Marshaller = new Jaxb2Marshaller();
+        // ClienteListXmlView // Clase wrapper, que envuelva el objeto para poderlo serializar correctamente
+        jaxb2Marshaller.setClassesToBeBound(new Class[] {ClienteListXmlView.class});
+        return jaxb2Marshaller;
+    }*/
+
     @Override
     public void addInterceptors(InterceptorRegistry registry) {
         // Registrando el interceptor para el cambio de lenguaje

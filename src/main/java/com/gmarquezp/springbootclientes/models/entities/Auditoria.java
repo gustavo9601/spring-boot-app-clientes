@@ -2,6 +2,8 @@ package com.gmarquezp.springbootclientes.models.entities;
 
 // @Embeddable // Se podra utilizar en otras clases, similar a un trait en PHP
 
+import com.fasterxml.jackson.annotation.JsonFormat;
+
 import javax.persistence.*;
 import java.util.Date;
 
@@ -12,9 +14,11 @@ import java.util.Date;
 public class Auditoria {
     @Column(name = "created_at")
     @Temporal(TemporalType.TIMESTAMP) // Para que se guarde en formato de fecha y hora
+    @JsonFormat(pattern = "dd/MM/yyyy HH:mm:ss") // Patron que se visualizara al retornar JSON
     private Date createdAt;
     @Column(name = "updated_at")
     @Temporal(TemporalType.TIMESTAMP)
+    @JsonFormat(pattern = "dd/MM/yyyy HH:mm:ss")
     private Date updatedAt;
 
 

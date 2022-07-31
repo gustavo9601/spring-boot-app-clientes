@@ -17,6 +17,16 @@
     <div class="col-12">
         <h1 th:text="${titulo}" class="text-secondary"></h1>
     </div>
+
+    <div class="col-12">
+    <!-- clientes?format=csv -->
+        <a th:href="@{'/clientes'(format='csv')}"
+           class="btn btn-outline-success btn-xs">Descargar CSV</a>
+        <a th:href="@{'/clientes'(format='json')}"
+           class="btn btn-outline-info btn-xs">Ver JSON</a>
+        <a th:href="@{'/clientes/rest'}"
+           class="btn btn-outline-warning btn-xs">Rest JSON</a>
+    </div>
 </div>
 
 

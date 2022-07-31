@@ -92,6 +92,21 @@
             <a th:href="@{'/clientes/ver/' + ${factura.cliente.id}}"
                class="btn btn-light btn-xs">&laquo; volver</a>
 
+            <!-- /facturas/ver/{numero_factura}?format=pdf -->
+
+            <div>
+                <div class="row">
+                    <div class="col-md-6">
+                        <a th:href="@{'/facturas/ver/' + ${factura.cliente.id}(format='pdf')}"
+                           class="btn btn-outline-danger btn-xs">&laquo; Descargar PDF</a>
+                    </div>
+                    <div class="col-md-6">
+                        <a th:href="@{'/facturas/ver/' + ${factura.cliente.id}(format='xlsx')}"
+                           class="btn btn-outline-success btn-xs">&laquo; Descargar Excel</a>
+                    </div>
+                </div>
+            </div>
+
 
         </div>
     </div>
